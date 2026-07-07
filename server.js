@@ -18,6 +18,17 @@ const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
 admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
 const db = admin.firestore();
 
+// ── KEEP-ALIVE (evita que o Render durma) ──
+const SELF_URL = "https://grl-backend-vvef.onrender.com";
+setInterval(async () => {
+  try {
+    await fetch(SELF_URL);
+    console.log("[keep-alive] ping ok");
+  } catch (e) {
+    console.warn("[keep-alive] falhou:", e.message);
+  }
+}, 4 * 60 * 1000); // a cada 4 minutos
+
 // ── CRIAR PREFERÊNCIA DE PAGAMENTO ──
 app.post("/criar-pagamento", async (req, res) => {
   try {
